@@ -19,21 +19,21 @@ public class ArrayRotation {
 		BufferedReader in = null;
 		PrintStream out = null;
 		try {
-
 			in = new BufferedReader(new InputStreamReader(System.in));
 			out = new PrintStream(System.out);
-			String lineItems[] = in.readLine().split(" ");
-			int n = Integer.parseInt(lineItems[0]);
-			int d = Integer.parseInt(lineItems[1]);
-			String dataLineItems[] = in.readLine().split(" ");
-			int arr[] = new int[n];
-			int i = 0;
-			for (String data : dataLineItems) {
-				arr[i] = Integer.parseInt(data);
-				i++;
-			}
-			rotateArray(n, d, arr);
+			int t = Integer.parseInt(in.readLine());
+			// Running the given test cases
+			while (--t >= 0) {
 
+				int n = Integer.parseInt(in.readLine());
+				String lineItems[] = in.readLine().split(" ");
+				int arr[] = new int[n];
+
+				for (int i = 0; i < n; i++) {
+					arr[i] = Integer.parseInt(lineItems[i]);
+				}
+				out.print(getLastElement(n, arr));
+			}
 		} catch (NumberFormatException e) {
 			out.print("Exception occured due to" + e);
 		} catch (IOException e) {
@@ -45,13 +45,41 @@ public class ArrayRotation {
 	}
 
 	/**
-	 * Method to rotate array d times
+	 * Method to fetch the last element after rotating and deleting array
+	 * element
+	 * 
+	 * @param n
+	 * @param arr
+	 * @return
+	 */
+	static int getLastElement(int n, int[] arr) {
+		int lastElement = 0;
+		int deletPosition = n;
+		while (arr.length != 1) {
+
+			arr = rotateArray(arr.length, arr.length - 1, arr);
+			/*
+			 * if (!start) { arr = Arrays.copyOfRange(arr, 0, arr.length - 1);
+			 * start = true; } else { arr = deleteArrayElement(arr.length, n -
+			 * deletPosition, arr); } deletPosition--;
+			 */
+			arr = deleteArrayElement(arr.length, n - deletPosition, arr);
+			deletPosition--;
+
+		}
+
+		lastElement = arr[0];
+		return lastElement;
+	}
+
+	/**
+	 * Method to return rotate array
 	 * 
 	 * @param n
 	 * @param d
 	 * @param arr
 	 */
-	static void rotateArray(int n, int d, int arr[]) {
+	static int[] rotateArray(int n, int d, int arr[]) {
 
 		int temp[] = new int[d];
 		for (int i = 0; i < d; i++) {
@@ -73,10 +101,69 @@ public class ArrayRotation {
 			rotateArr[n - d + i] = temp[i];
 		}
 
-		for (int data : rotateArr) {
-			new PrintStream(System.out).print(data + "\t");
-		}
+		return rotateArr;
 	}
-	
-	
+
+	/**
+	 * Method to delete the element from array after rotation
+	 * 
+	 * @param n
+	 * @param pos
+	 * @param arr
+	 * @return
+	 */
+	static int[] deleteArrayElement(int n, int pos, int arr[]) {
+
+		if (pos >= n) {
+			return Arrays.copyOfRange(arr, 1, n);
+		}
+
+		int revArr[] = revesre(arr);
+		int remvedArr[] = remove(pos, revArr);
+
+		return revesre(remvedArr);
+
+	}
+
+	/**
+	 * Method to remove an element at particular index in an array
+	 * 
+	 * @param index
+	 * @param arr
+	 * @return
+	 */
+	static int[] remove(int index, int[] arr) {
+		int[] newArr = new int[arr.length - 1];
+		if (index < 0 || index > arr.length) {
+			return arr;
+		}
+		int j = 0;
+		for (int i = 0; i < arr.length; i++) {
+			if (i == index) {
+				i++;
+			}
+			newArr[j++] = arr[i];
+		}
+
+		return newArr;
+	}
+
+	/**
+	 * Method to reverse an array ( for time being this will increase the
+	 * complexity but 'll check later to reduce the complexity for this)
+	 * 
+	 * @param arr
+	 * @return
+	 */
+	static int[] revesre(int[] arr) {
+
+		int revArr[] = new int[arr.length];
+
+		for (int i = 0; i < arr.length; i++) {
+
+			revArr[i] = arr[arr.length - 1 - i];
+		}
+
+		return revArr;
+	}
 }
