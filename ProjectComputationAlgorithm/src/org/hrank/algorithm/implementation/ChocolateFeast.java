@@ -1,83 +1,102 @@
-package org.hrank.algorithm.implementation;
+package org.hrank.implementation;
 
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 
 /**
  * Class to implement chocolate-feast algo.
  * 
- * @author suhail-a
+ * @author suhahmed0
  * @version 1.0
- * 
+ *
  */
 public class ChocolateFeast {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
-		Scanner sc = new Scanner(System.in);
+		BufferedReader in = null;
+		PrintStream out = null;
+		try {
 
-		int tCase = sc.nextInt();
+			in = new BufferedReader(new InputStreamReader(System.in));
+			out = new PrintStream(System.out);
+			int N = Integer.parseInt(in.readLine());
+			while (--N >= 0) {
+				String lineItems[] = in.readLine().split(" ");
+				int n = Integer.parseInt(lineItems[0]);
+				int c = Integer.parseInt(lineItems[1]);
+				int m = Integer.parseInt(lineItems[2]);
 
-		for (int i = 0; i < tCase; i++) {
-
-			long N = sc.nextLong();
-			long c = sc.nextLong();
-			long m = sc.nextLong();
-
-			System.out.println(getTotalChocolates(m, c, N));
-			
-		}
-
-		sc.close();
-	}
-
-	static long getTotalChoclate(long m, long c, long N) {
-
-		long total = 0;
-
-		for (int i = 0; i < N / c; i++) {
-
-			total += N / c;
-			long wrappers = total / m;
-			while (wrappers >= m) {
-
-				wrappers = wrappers - (wrappers % m);
-
-				total = total + wrappers;
-
-				wrappers -= wrappers % m;
-
-				if (wrappers >= m) {
-					System.out.println(total + "inside");
-					continue;
-				} else {
-					break;
-				}
+				out.println(chocolateFeastWithoutRecursion(n, c, m));
+				out.println(chocolateFeast(n, c, m));
 			}
+		} catch (NumberFormatException e) {
+			out.print("Exception occured due to" + e);
+		} catch (IOException e) {
+			out.print("Exception occured due to" + e);
+		} finally {
+			// Freeing up the resources
+			in.close();
+			out.close();
 		}
-
-		return total;
 	}
 
-	static long getTotalChocolates(long m, long c, long N) {
+	/**
+	 * Method to get the total chocolates after returning chocolates
+	 * 
+	 * @param n
+	 * @param c
+	 * @param m
+	 * @return
+	 */
+	static int chocolateFeast(int n, int c, int m) {
 
-		long totalChoclates = 0;
-		long totalWrappers = 0;
-		long freeChoclates = 0;
+		int totalChoclates = 0;
 
-		totalChoclates = N / c;
-		totalWrappers = totalChoclates;
-		while (totalWrappers >= m) {
+		totalChoclates = n / c;
 
-			long wrappersToGive = totalWrappers - (totalWrappers % m);
+		return totalChoclates + countWrappersChoclate(totalChoclates, m);
+	}
 
-			freeChoclates = totalWrappers / m;
+	/**
+	 * Method to count wrappers
+	 * 
+	 * @param choclates
+	 * @param wrappers
+	 * @return
+	 */
+	static int countWrappersChoclate(int choclates, int wrappers) {
 
-			totalChoclates += freeChoclates;
+		if (choclates < wrappers)
+			return 0;
 
-			totalWrappers = (totalWrappers - wrappersToGive) + freeChoclates;
+		int newChoc = choclates / wrappers;
 
+		return newChoc + countWrappersChoclate(newChoc + choclates % wrappers, wrappers);
+
+	}
+
+	/**
+	 * Method to get the total chocolates without recursion (Brute Forcing)
+	 * 
+	 * @param n
+	 * @param c
+	 * @param m
+	 * @return
+	 */
+	static int chocolateFeastWithoutRecursion(int n, int c, int m) {
+
+		int totalChocs = n / c;
+		// Below code without using recursion
+		int wrappers = totalChocs;
+		while (m <= wrappers) {
+			wrappers = wrappers - m;
+			totalChocs++;
+			wrappers++;
 		}
 
-		return totalChoclates;
+		return totalChocs;
 	}
 }
